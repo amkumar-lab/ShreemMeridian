@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8">
+<title>Shreem 3D Anatomy</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hind:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Tiro+Devanagari+Sanskrit&display=swap">
+<style>
+body{margin:0}[hidden]{display:none!important}
+
+/* Layout: full-height 3D observatory stage with a control column; one dark look by design */
+:root{
+  --bg:#07080f; --panel:#0d1020; --line:#20253d; --fg:#ece5d3; --muted:#9b97ab; --gold:#f2c14e;
+  --sky:#3be38c; --air:#45a3ff; --fire:#ff4d3d; --water:#e9f0ff; --prana:#ffc93c;
+  --display:"Marcellus",Georgia,serif; --body:"Hind",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --deva:"Tiro Devanagari Sanskrit","Noto Serif Devanagari",serif; color-scheme:dark;
+}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:1300px;margin:0 auto;padding-block:16px 32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+header h1{font-family:var(--display);font-weight:400;font-size:clamp(22px,3vw,30px);margin:0}
+header h1 span{font-family:var(--deva);color:var(--gold);margin-right:8px}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.app{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;align-items:start}
+@media (max-width:860px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage{position:relative;height:clamp(520px,80vh,880px);border-radius:14px;overflow:hidden;background:#04050a;border:1px solid var(--line);touch-action:none;cursor:grab}
+.stage:active{cursor:grabbing}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ov{position:absolute;pointer-events:none}
+.ttl{top:14px;left:14px;max-width:70%}
+.ttl .k{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.ttl .t{font-family:var(--display);font-size:clamp(18px,2.4vw,24px)}
+.lbl{left:0;top:0;transform:translate(-9999px,0);background:rgba(5,6,12,.82);border:1px solid rgba(255,255,255,.3);border-radius:6px;padding:3px 8px;font-size:12.5px;white-space:nowrap;transition:opacity .4s}
+.lbl small{display:block;color:#b9b3a3;font-size:11.5px}
+.sub{left:0;right:0;bottom:12px;text-align:center;padding-inline:14px}
+.sub span{display:inline-block;max-width:min(640px,100%);font-family:var(--display);font-size:clamp(14px,1.7vw,17px);color:#f3ead2;background:rgba(5,6,14,.72);border:1px solid rgba(242,193,78,.25);border-radius:10px;padding:7px 14px;text-wrap:balance}
+.sub span:empty{display:none}
+.load{inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;background:#04050a;transition:opacity .6s}
+.bar{width:220px;height:4px;background:#1a1f35;border-radius:2px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--gold)}
+.side{display:flex;flex-direction:column;gap:12px;min-width:0}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.box h2{font-family:var(--mono);font-weight:400;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0}
+.row{display:flex;flex-wrap:wrap;gap:6px}
+button{font:inherit;font-size:13px;color:var(--fg);background:#0a0d1a;border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+button:hover{border-color:#3a4166}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+button[aria-pressed="true"]{border-color:var(--c,var(--gold));color:#fff;background:#141826}
+button i{width:9px;height:9px;border-radius:50%;background:var(--c,#888)}
+.play{background:var(--gold);color:#1b1404;border-color:var(--gold);font-weight:600}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.note a{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1><span>र्ष्क्ष्रीं</span>Shreem 3D Anatomy</h1>
+    <span class="tag">Part 3 · Prototype</span><a href="../index.html" style="margin-left:auto;font-size:13px;color:#f2c14e">All parts</a>
+  </header>
+  <div class="app">
+    <div class="stage" id="stage">
+      <canvas id="cv" aria-label="3D anatomy of the human body"></canvas>
+      <div class="ov ttl"><div class="k" id="ttlK">Explore</div><div class="t" id="ttlT">Transparent body</div></div>
+      <div class="ov lbl" id="lbl"></div>
+      <div class="ov sub"><span id="subT">Drag to rotate, scroll or pinch to zoom.</span></div>
+      <div class="ov load" id="load"><div class="tag" id="loadT">Loading anatomy…</div><div class="bar"><i id="loadBar"></i></div></div>
+    </div>
+    <aside class="side">
+      <div class="box"><h2>Meridian</h2>
+        <div class="row" id="els"></div>
+        <div class="row"><button class="play" id="tour">Play meridian tour</button><button id="stop">Stop</button></div>
+      </div>
+      <div class="box"><h2>Zoom to</h2><div class="row" id="orgs"></div></div>
+      <div class="box"><h2>Systems</h2><div class="row" id="lays"></div></div>
+      <p class="note">3D models: Z-Anatomy, the libre 3D atlas of anatomy (CC BY-SA 4.0), based on BodyParts3D, The Database Center for Life Science (CC BY-SA 2.1 Japan). A guided visualization of the practice, not medical guidance.</p>
+    </aside>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const cv=$("cv"),gl=cv.getContext("webgl2",{antialias:true,premultipliedAlpha:false});
+const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+if(!gl){$("loadT").textContent="This device can't show 3D (WebGL 2 is not available).";return}
+const hex=h=>{h=h.replace("#","");const n=parseInt(h,16);return[(n>>16&255)/255,(n>>8&255)/255,(n&255)/255]};
+const EL={sky:{n:"Sky",c:"#3be38c"},air:{n:"Air",c:"#45a3ff"},fire:{n:"Fire",c:"#ff4d3d"},water:{n:"Water",c:"#e9f0ff"},prana:{n:"Prana",c:"#ffc93c"}};
+const COL={heart:"#c9473f",lungs:"#e2a0a6",liver:"#8f3a2c",stomach:"#dca08e",pancreas:"#e7b07a",kidneys:"#b45532",bladder:"#e3c46a",repro:"#d38c8a",intestine:"#e2b6a4",
+  throat:"#d79c9c",mouth:"#d4807c",pituitary:"#f0d080",pineal:"#f0d080",other:"#c9a0a0",cortex:"#e6b3b7",frontal:"#e9b6ba",parietal:"#e5b0b5",temporal:"#e2aeb3",occipital:"#e0acb1",
+  cerebellum:"#d596a2",brainstem:"#e0c2a2",deep:"#f0d2a8",nerve:"#f0cf48",cord:"#f6e08a",auto:"#e6bd3c",artery:"#cf3a2e",vein:"#4b5cb4",node:"#7fe05a",thymus:"#a6dc8c",spleen:"#8a3a5a",skin:"#7fb8ff"};
+const ORG={heart:{n:"Heart",k:["heart"]},lungs:{n:"Lungs",k:["lungs"]},liver:{n:"Liver",k:["liver"]},pancreas:{n:"Pancreas",k:["pancreas"]},kidneys:{n:"Kidneys",k:["kidneys"]},
+  bladder:{n:"Bladder",k:["bladder"]},repro:{n:"Reproductive organs",k:["repro"]},brain:{n:"Brain",g:"brain"},lymph:{n:"Lymph nodes",g:"lymph"},stomach:{n:"Stomach",k:["stomach"]}};
+const LIT={sky:{k:["temporal","throat","mouth","intestine"],g:["nerves"]},air:{k:["frontal","lungs","throat"],g:["nerves"]},fire:{k:["occipital","heart","liver","pancreas","artery"]},
+  water:{k:["deep","kidneys","bladder","repro","vein"],g:["lymph"]},prana:{k:["parietal","throat","stomach","intestine","pancreas"]}};
+const TOURS={
+  sky:[["Soulseat","soul"],["Temporal lobes","k:temporal"],["Mouth · breath exits as green prana","k:mouth"],["Arms and thumbs","r:Anterior region of wrist.l"],["Every toe joint","r:Metatarsal region.l"],["Muladhara · elimination","k:intestine"]],
+  air:[["Soulseat","soul"],["Frontal lobe · motor cortex","k:frontal"],["Throat and trachea","k:throat"],["Lungs · breathing becomes rhythmic","k:lungs"],["Little fingers · both hands","r:Anterior region of wrist.r"]],
+  fire:[["Soulseat","soul"],["Occipital lobe · visual cortex","k:occipital"],["Heart","k:heart"],["Liver","k:liver"],["Pancreas","k:pancreas"],["Legs · walking pathways","r:Anterior region of knee.l"]],
+  water:[["Soulseat","soul"],["Brain ventricles · CSF","k:deep"],["Kidneys","k:kidneys"],["Bladder","k:bladder"],["Reproductive organs","k:repro"],["Lymph nodes · lymph drains and flows","n:Central axillary nodes.l"]],
+  prana:[["Soulseat","soul"],["Parietal lobe","k:parietal"],["Nostrils · prana intake","k:throat"],["Navel center · prana generator","r:Umbilical region.l"],["Stomach","k:stomach"],["Wrists and feet","r:Anterior region of ankle.l"]]};
+const NAR={sky:"The Sky meridian awakens hearing, breath and grounding, down to Muladhara.",air:"The Air meridian links intention, movement and respiration.",
+  fire:"The Fire meridian energizes vision, the heart, liver and pancreas.",water:"The Water meridian supports purification and the flow of lymph.",prana:"The Prana meridian turns breath into life force at the navel."};
+
+/* ---------- GL setup ---------- */
+function sh(t,s){const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))throw gl.getShaderInfoLog(o);return o}
+function prog(vs,fs){const p=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,vs));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw gl.getProgramInfoLog(p);
+  const u={};for(let i=0;i<gl.getProgramParameter(p,gl.ACTIVE_UNIFORMS);i++){const n=gl.getActiveUniform(p,i).name;u[n]=gl.getUniformLocation(p,n)}return{p,u}}
+const MESH=prog(`#version 300 es
+layout(location=0) in vec3 aP;layout(location=1) in vec3 aN;uniform mat4 uVP;uniform vec3 uLo,uSc;out vec3 vN;out vec3 vW;
+void main(){vec3 p=uLo+(aP*32767.0+32768.0)/65535.0*uSc;vW=p;vN=aN;gl_Position=uVP*vec4(p,1.0);}`,
+`#version 300 es
+precision highp float;in vec3 vN;in vec3 vW;uniform vec3 uCol,uEm,uEye;uniform float uA,uGlass,uDim;out vec4 o;
+void main(){vec3 n=normalize(vN);vec3 v=normalize(uEye-vW);if(dot(n,v)<0.0)n=-n;float f=pow(1.0-max(dot(n,v),0.0),2.2);
+ if(uGlass>0.5){vec3 c=mix(vec3(.10,.22,.42),vec3(.55,.8,1.0),f);o=vec4(c,(0.008+0.30*f*f)*uA);return;}
+ vec3 l1=normalize(vec3(.4,.8,.6)),l2=normalize(vec3(-.6,.2,-.4));float d=max(dot(n,l1),0.0)*.75+max(dot(n,l2),0.0)*.25;
+ vec3 h=normalize(l1+v);float s=pow(max(dot(n,h),0.0),40.0)*.35;
+ vec3 c=uCol*(.28+.85*d)*uDim+s*uDim+uEm*(.55+.9*f);o=vec4(c,uA);}`);
+const PTS=prog(`#version 300 es
+layout(location=0) in vec4 aP;layout(location=1) in vec3 aC;uniform mat4 uVP;uniform float uH;out vec3 vC;out float vA;
+void main(){gl_Position=uVP*vec4(aP.xyz,1.0);gl_PointSize=uH*aP.w/gl_Position.w;vC=aC;vA=1.0;}`,
+`#version 300 es
+precision highp float;in vec3 vC;out vec4 o;void main(){vec2 d=gl_PointCoord-.5;float r=length(d)*2.0;float a=exp(-r*r*3.5);o=vec4(vC*a+vec3(a*a*.6),a);}`);
+const pBuf=gl.createBuffer(),pVao=gl.createVertexArray();gl.bindVertexArray(pVao);gl.bindBuffer(gl.ARRAY_BUFFER,pBuf);
+gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,4,gl.FLOAT,false,28,0);gl.enableVertexAttribArray(1);gl.vertexAttribPointer(1,3,gl.FLOAT,false,28,16);gl.bindVertexArray(null);
+
+/* ---------- math ---------- */
+const V=(x,y,z)=>[x,y,z],sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],add=(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]],mul=(a,s)=>[a[0]*s,a[1]*s,a[2]*s],
+  dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],nrm=a=>{const l=Math.hypot(...a)||1;return mul(a,1/l)},lerp=(a,b,t)=>a+(b-a)*t;
+function persp(fy,as,n,f){const t=1/Math.tan(fy/2);return[t/as,0,0,0,0,t,0,0,0,0,(f+n)/(n-f),-1,0,0,2*f*n/(n-f),0]}
+function look(e,c,u){const z=nrm(sub(e,c)),x=nrm(cross(u,z)),y=cross(z,x);return[x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-dot(x,e),-dot(y,e),-dot(z,e),1]}
+function mm(a,b){const o=new Array(16);for(let i=0;i<4;i++)for(let j=0;j<4;j++){let s=0;for(let k=0;k<4;k++)s+=a[k*4+j]*b[i*4+k];o[i*4+j]=s}return o}
+function proj(M,p){const x=M[0]*p[0]+M[4]*p[1]+M[8]*p[2]+M[12],y=M[1]*p[0]+M[5]*p[1]+M[9]*p[2]+M[13],w=M[3]*p[0]+M[7]*p[1]+M[11]*p[2]+M[15];return w>0?[x/w,y/w]:null}
+
+/* ---------- data ---------- */
+let META=null;const G={};const ORDER=["vessels","nerves","lymph","organs","heart","brain","body"];
+const vis={organs:true,heart:true,brain:true,nerves:false,vessels:false,lymph:false,body:true};
+async function loadAll(){
+  const r=await fetch("anatomy.json");if(!r.ok)throw new Error("anatomy.json "+r.status);META=await r.json();
+  const names=Object.keys(META.groups);let done=0;
+  await Promise.all(names.map(async g=>{const rr=await fetch(META.groups[g].file);if(!rr.ok)throw new Error(META.groups[g].file+" "+rr.status);const txt=await rr.text(),bin=atob(txt.trim()),u8=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);build(g,u8.buffer);done++;$("loadBar").style.width=(done/names.length*100)+"%";$("loadT").textContent=`Loading anatomy… ${done} of ${names.length}`}));
+}
+function build(g,buf){const parts=META.groups[g].parts.map(p=>{p.n=p.n.replace(/\.\d{3}$/,"");const vao=gl.createVertexArray();gl.bindVertexArray(vao);
+    const vb=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,vb);gl.bufferData(gl.ARRAY_BUFFER,new Int16Array(buf,p.o[0],p.v*4),gl.STATIC_DRAW);gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,3,gl.SHORT,true,8,0);
+    const nb=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,nb);gl.bufferData(gl.ARRAY_BUFFER,new Int8Array(buf,p.o[1],p.v*4),gl.STATIC_DRAW);gl.enableVertexAttribArray(1);gl.vertexAttribPointer(1,3,gl.BYTE,true,4,0);
+    const ib=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,p.b?new Uint32Array(buf,p.o[2],p.i):new Uint16Array(buf,p.o[2],p.i),gl.STATIC_DRAW);
+    gl.bindVertexArray(null);return{...p,g,vao,col:hex(COL[p.k]||"#cccccc"),lit:0}});G[g]=parts}
+function partsBy(spec){const out=[];const tall=p=>p.g==="brain"&&(p.hi[1]-p.lo[1]>.12||p.c[1]<1.5);if(spec.g)G[spec.g]&&out.push(...G[spec.g]);if(spec.k)ORDER.forEach(g=>(G[g]||[]).forEach(p=>{if(spec.k.includes(p.k)&&!tall(p))out.push(p)}));return out}
+function boxOf(ps){const lo=[1e9,1e9,1e9],hi=[-1e9,-1e9,-1e9];ps.forEach(p=>{for(let i=0;i<3;i++){lo[i]=Math.min(lo[i],p.lo[i]);hi[i]=Math.max(hi[i],p.hi[i])}});return{c:mul(add(lo,hi),.5),s:Math.max(hi[0]-lo[0],hi[1]-lo[1],hi[2]-lo[2])}}
+function soul(){const d=partsBy({k:["deep"]});const b=boxOf(d);return add(b.c,[0,-.012,.01])}
+function resolve(t){if(t==="soul")return{c:soul(),s:.09};if(t.startsWith("k:"))return boxOf(partsBy({k:[t.slice(2)]}));if(t.startsWith("g:"))return boxOf(partsBy({g:t.slice(2)}));
+  if(t.startsWith("n:")){for(const g of ORDER){const p=(G[g]||[]).find(x=>x.n===t.slice(2));if(p)return{c:p.c,s:.12}}}
+  if(t.startsWith("r:")){const p=G.body.find(x=>x.n===t.slice(2));return p?{c:p.c,s:.18}:{c:[0,1,0],s:.4}}return{c:[0,.9,0],s:1.8}}
+
+/* ---------- camera ---------- */
+const cam={yaw:0,pitch:.05,dist:2.3,tgt:[0,.88,0]},goal={yaw:0,pitch:.05,dist:2.3,tgt:[0,.88,0]};
+function flyTo(b,yaw){goal.tgt=b.c.slice();goal.dist=Math.max(.16,b.s*2.6);if(yaw!=null)goal.yaw=yaw;goal.pitch=.08}
+let drag=null;const pts=new Map();
+cv.addEventListener("pointerdown",e=>{cv.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY]);drag={x:e.clientX,y:e.clientY};userMoved()});
+cv.addEventListener("pointermove",e=>{if(!pts.has(e.pointerId))return;const prev=pts.get(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY]);
+  if(pts.size===2){const [a,b]=[...pts.values()];const d1=Math.hypot(a[0]-b[0],a[1]-b[1]);const o=[...pts.entries()].find(([k])=>k!==e.pointerId)[1];const d0=Math.hypot(prev[0]-o[0],prev[1]-o[1]);if(d0>0)goal.dist=Math.min(4,Math.max(.12,goal.dist*d0/d1));return}
+  goal.yaw-=(e.clientX-prev[0])*.008;goal.pitch=Math.max(-1.3,Math.min(1.3,goal.pitch+(e.clientY-prev[1])*.006))});
+["pointerup","pointercancel"].forEach(t=>cv.addEventListener(t,e=>{pts.delete(e.pointerId)}));
+cv.addEventListener("wheel",e=>{e.preventDefault();goal.dist=Math.min(4,Math.max(.12,goal.dist*Math.exp(e.deltaY*.001)));userMoved()},{passive:false});
+
+/* ---------- state ---------- */
+const S={el:null,tour:null,ti:0,tt:0,label:null,flow:[],flowCol:[1,1,1]};
+function setEl(k){S.el=k;document.querySelectorAll("#els button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.k===(k||"all"))));
+  $("ttlK").textContent=k?EL[k].n+" element":"Explore";$("ttlT").textContent=k?EL[k].n+" meridian":"Transparent body";$("subT").textContent=k?NAR[k]:"Drag to rotate, scroll or pinch to zoom.";
+  S.flow=k?TOURS[k].map(s=>resolve(s[1]).c):[];S.flowCol=k?hex(EL[k].c):[1,1,1];
+  ORDER.forEach(g=>(G[g]||[]).forEach(p=>p.target=0));if(k)partsBy(LIT[k]).forEach(p=>p.target=1);
+  try{history.replaceState(null,"","#"+(k||"explore"))}catch(e){}}
+function startTour(k){setEl(k||S.el||"fire");S.tour=TOURS[S.el];S.ti=0;S.tt=0;goStop()}
+function goStop(){const s=S.tour[S.ti],b=resolve(s[1]);flyTo(b,s[1].startsWith("r:")?.0:null);S.label={t:s[0],p:b.c};$("subT").textContent=s[0]}
+function stopTour(){S.tour=null;S.label=null;flyTo({c:[0,.88,0],s:.9});if(S.el)$("subT").textContent=NAR[S.el]}
+function userMoved(){if(S.tour){S.tour=null}}
+
+/* ---------- UI ---------- */
+(function(){const e=$("els");const all=document.createElement("button");all.textContent="All";all.dataset.k="all";all.setAttribute("aria-pressed","true");all.onclick=()=>{stopTour();setEl(null)};e.appendChild(all);
+  Object.entries(EL).forEach(([k,v])=>{const b=document.createElement("button");b.dataset.k=k;b.style.setProperty("--c",v.c);b.innerHTML="<i></i>";b.append(v.n);b.setAttribute("aria-pressed","false");b.onclick=()=>{setEl(k);startTour(k)};e.appendChild(b)});
+  $("tour").onclick=()=>startTour(S.el||"fire");$("stop").onclick=stopTour;
+  Object.entries(ORG).forEach(([k,v])=>{const b=document.createElement("button");b.textContent=v.n;b.onclick=()=>{S.tour=null;const ps=partsBy(v);const bb=boxOf(ps);flyTo(bb);S.label={t:v.n,p:bb.c};
+    ORDER.forEach(g=>(G[g]||[]).forEach(p=>p.target=0));ps.forEach(p=>p.target=1)};$("orgs").appendChild(b)});
+  [["organs","Organs"],["heart","Heart"],["brain","Brain"],["nerves","Nerves"],["vessels","Blood vessels"],["lymph","Lymph"],["body","Skin"]].forEach(([k,n])=>{const b=document.createElement("button");b.textContent=n;b.setAttribute("aria-pressed",String(vis[k]));
+    b.onclick=()=>{vis[k]=!vis[k];b.setAttribute("aria-pressed",String(vis[k]))};$("lays").appendChild(b)})})();
+
+/* ---------- render ---------- */
+let W=0,H=0,DPR=1;function resize(){const r=cv.getBoundingClientRect();DPR=Math.min(2,window.devicePixelRatio||1);W=r.width;H=r.height;cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR)}
+new ResizeObserver(resize).observe($("stage"));resize();
+let last=performance.now(),T=0;
+function frame(now){const rdt=(now-last)/1000,dt=Math.min(.05,rdt);last=now;T+=dt;
+  const k=RM?1:1-Math.pow(.02,dt);cam.yaw=lerp(cam.yaw,goal.yaw,k);cam.pitch=lerp(cam.pitch,goal.pitch,k);cam.dist=lerp(cam.dist,goal.dist,k);for(let i=0;i<3;i++)cam.tgt[i]=lerp(cam.tgt[i],goal.tgt[i],k);
+  if(!S.tour&&!pts.size&&!S.label&&!RM)goal.yaw+=dt*.12;
+  if(S.tour){S.tt+=Math.min(rdt,.5);if(S.tt>5.2){S.tt=0;S.ti++;if(S.ti>=S.tour.length){S.tour=null;setTimeout(()=>{if(!S.tour)stopTour()},800)}else goStop()}}
+  const eye=add(cam.tgt,[Math.sin(cam.yaw)*Math.cos(cam.pitch)*cam.dist,Math.sin(cam.pitch)*cam.dist,Math.cos(cam.yaw)*Math.cos(cam.pitch)*cam.dist]);
+  const VP=mm(persp(.75,W/H,Math.max(.005,cam.dist*.02),20),look(eye,cam.tgt,[0,1,0]));
+  gl.viewport(0,0,cv.width,cv.height);gl.clearColor(.016,.02,.04,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+  if(META){const lo=META.bounds.min,hi=META.bounds.max,sc=sub(hi,lo);
+    gl.useProgram(MESH.p);gl.uniformMatrix4fv(MESH.u.uVP,false,VP);gl.uniform3fv(MESH.u.uLo,lo);gl.uniform3fv(MESH.u.uSc,sc);gl.uniform3fv(MESH.u.uEye,eye);
+    const anyLit=ORDER.some(g=>(G[g]||[]).some(p=>p.target>0)),ec=S.el?hex(EL[S.el].c):[1,.85,.4],pulse=.6+.4*Math.sin(T*3);
+    gl.enable(gl.DEPTH_TEST);gl.depthMask(true);gl.disable(gl.BLEND);gl.disable(gl.CULL_FACE);
+    const draw=p=>{gl.bindVertexArray(p.vao);gl.drawElements(gl.TRIANGLES,p.i,p.b?gl.UNSIGNED_INT:gl.UNSIGNED_SHORT,0)};const ghosts=[];
+    gl.uniform1f(MESH.u.uGlass,0);
+    ORDER.forEach(g=>{if(g==="body"||!G[g])return;const on=vis[g]||(S.el&&G[g].some(p=>p.target>0));if(!on)return;G[g].forEach(p=>{p.lit=lerp(p.lit,p.target||0,Math.min(1,dt*2.5));
+      if(anyLit&&p.lit<.5&&p.target<.5){if(!S.el)ghosts.push(p);return}
+      gl.uniform3fv(MESH.u.uCol,p.col);gl.uniform3fv(MESH.u.uEm,mul(ec,p.lit*.55*pulse));gl.uniform1f(MESH.u.uA,1);gl.uniform1f(MESH.u.uDim,1);draw(p)})});
+    if(ghosts.length){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);gl.uniform3fv(MESH.u.uEm,[0,0,0]);gl.uniform1f(MESH.u.uDim,.8);gl.uniform1f(MESH.u.uA,.16);
+      ghosts.forEach(p=>{gl.uniform3fv(MESH.u.uCol,p.col);draw(p)});gl.depthMask(true);gl.disable(gl.BLEND)}
+    if(vis.body&&G.body){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);gl.depthMask(false);gl.uniform1f(MESH.u.uGlass,1);gl.uniform1f(MESH.u.uA,1);
+      G.body.forEach(p=>{gl.bindVertexArray(p.vao);gl.drawElements(gl.TRIANGLES,p.i,p.b?gl.UNSIGNED_INT:gl.UNSIGNED_SHORT,0)})}
+    // flow particles along the meridian path
+    const P=[];if(S.flow.length>1){const L=[0];for(let i=1;i<S.flow.length;i++)L.push(L[i-1]+Math.hypot(...sub(S.flow[i],S.flow[i-1])));const tot=L[L.length-1],n=70;
+      for(let i=0;i<n;i++){let d=((T*.12/tot+i/n)%1)*tot,j=1;while(j<L.length-1&&L[j]<d)j++;const f=(d-L[j-1])/((L[j]-L[j-1])||1),q=add(S.flow[j-1],mul(sub(S.flow[j],S.flow[j-1]),f));
+        P.push(q[0],q[1],q[2],.012+.006*Math.sin(i),...S.flowCol)}
+      S.flow.forEach((q,i)=>P.push(q[0],q[1],q[2],.03+.01*Math.sin(T*3+i),...S.flowCol))}
+    const sp=soul();P.push(sp[0],sp[1],sp[2],.035+.008*Math.sin(T*2.2),1,.79,.24);
+    gl.useProgram(PTS.p);gl.uniformMatrix4fv(PTS.u.uVP,false,VP);gl.uniform1f(PTS.u.uH,cv.height*1.2);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);gl.depthMask(false);gl.disable(gl.DEPTH_TEST);
+    gl.bindVertexArray(pVao);gl.bindBuffer(gl.ARRAY_BUFFER,pBuf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(P),gl.DYNAMIC_DRAW);gl.drawArrays(gl.POINTS,0,P.length/7);gl.bindVertexArray(null);
+    gl.depthMask(true);
+    const L=$("lbl");if(S.label){const q=proj(VP,S.label.p);if(q){const x=(q[0]*.5+.5)*W,y=(1-(q[1]*.5+.5))*H;L.textContent=S.label.t;L.style.transform=`translate(${Math.min(W-L.offsetWidth-8,x+14)}px,${Math.max(8,y-34)}px)`;L.style.opacity=1}else L.style.opacity=0}else L.style.opacity=0}
+  requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+loadAll().then(()=>{$("load").style.opacity=0;setTimeout(()=>$("load").hidden=true,700);const h=(location.hash||"").slice(1);if(EL[h]){setEl(h);startTour(h)}else setEl(null)})
+  .catch(e=>{$("loadT").textContent="Couldn't load the anatomy files: "+e.message});
+window.Shreem3D={setEl,startTour,stopTour,cam,goal,stop:i=>{if(!S.tour)return;S.ti=i;S.tt=0;goStop()}};
+})();
+</script>
+
+</body>
+</html>
